@@ -258,6 +258,8 @@ table.sum.pg th{background:#4E8A2E} table.sum.rs th{background:#C9612A}
 .piece.sel .hl{opacity:1}
 .slotg{cursor:pointer}
 .slotg:hover .slot{stroke-width:3;opacity:1!important}
+.fb.rev{background:var(--warn-soft);border-color:var(--warn)} .fb.rev h4{color:var(--warn)}
+.fb .left{font-size:14px;color:var(--ink-3)}
 </style>
 </head>
 <body>
@@ -288,6 +290,7 @@ table.sum.pg th{background:#4E8A2E} table.sum.rs th{background:#C9612A}
         <li><span class="n">2</span><span>關卡有很多種玩法：<div class="kinds"><span>拖曳貼標籤</span><span>特徵分類</span><span>方程式填空</span><span>比較表勾選</span><span>是非快答</span></div></span></li>
         <li><span class="n">3</span><span>拖曳題可以<b>用拖的</b>，也可以<b>先點一張卡片、再點目標位置</b>；手機上點兩下比較穩。</span></li>
         <li><span class="n">4</span><span>答錯不會擋住你，但每一關試了幾次都會記錄下來，最後變成一張<b>學習診斷卡</b>，請截圖交給老師。</span></li>
+        <li><span class="n">5</span><span>答錯不會擋住你：同一題答錯 <b>5 次</b>（點圖題是點錯 5 次），就會<b>自動顯示答案</b>並附上解析。是否看了答案也會記錄在學習診斷卡上。</span></li>
       </ul>
       <div class="fields">
         <div class="field"><label for="f-name">姓名</label><input id="f-name" type="text" autocomplete="off" placeholder="王小明"></div>
@@ -745,6 +748,8 @@ const STAGES=KEEP.map(i=>ALL_STAGES[i]);
 <script>
 const el=id=>document.getElementById(id);
 const KEY='energygame.v2';
+const REVEAL_N=5;   /* 答錯幾次後自動顯示答案 */
+const SOLS={"光反應還是固碳反應？": {"L0": "a1", "L1": "a2", "L2": "a3", "L3": "a4", "L4": "a5", "C0": "b1", "C1": "b2", "C2": "b3", "C3": "b4", "C4": "b5"}};
 let ST={idx:0,tries:{},tags:{},who:{n:'',c:'',s:''},t0:0,done:false,passed:{}};
 let place={},sel=null,answered=false,pick=new Set(),order=[],layout={};
 let seqv=[],fillv={},fillOn=null,matchv={},gridv={},tfv={},hotStep=0,hotMarks=[],optPerm=[];
@@ -852,6 +857,8 @@ function hotClick(e){
     const last=mk.lastElementChild;setTimeout(()=>last&&last.remove(),1600);
     el('q-fb').innerHTML=`<div class="fb no"><h4>再找找看</h4><p>${s.miss[r]}</p><p><span class="tag">${TAGS.P1[0]}</span></p></div>`;
     el('barmsg').textContent=`已點錯 ${ST.tries[ST.idx]-1} 次`;
+    if(ST.tries[ST.idx]-1>=REVEAL_N){revealHot(s);drawTrack();save();return;}
+    el('q-fb').insertAdjacentHTML('beforeend',`<div class="fb no" style="margin-top:8px"><p class="left">再點錯 ${REVEAL_N-(ST.tries[ST.idx]-1)} 次，就會自動顯示答案。</p></div>`);
   }
   drawTrack();save();
 }
@@ -938,15 +945,37 @@ function show(i){
   renderPanel(s);renderBoard(s);drawTrack();save();window.scrollTo({top:0,behavior:'smooth'});
 }
 function addTags(t){(t||[]).forEach(x=>{ST.tags[x]=(ST.tags[x]||0)+1})}
-function pass(s){
+function pass(s,rev){
   answered=true;ST.passed=ST.passed||{};ST.passed[ST.idx]=true;
-  el('q-fb').innerHTML=`<div class="fb ok"><h4>✓ 正確</h4><p>${s.why}</p></div>`+refHTML(s.refs);bindZoom(el('q-fb'));
+  if(rev){ST.revealed=ST.revealed||{};ST.revealed[ST.idx]=true;}
+  el('q-fb').innerHTML=(rev?`<div class="fb rev"><h4>答案已顯示</h4><p>${rev===true?`已答錯 ${REVEAL_N} 次，正確答案已經自動顯示，請對照答案再讀一次解析：`:rev}</p><p>${s.why}</p></div>`:`<div class="fb ok"><h4>✓ 正確</h4><p>${s.why}</p></div>`)+refHTML(s.refs);bindZoom(el('q-fb'));
   el('check-btn').classList.add('hidden');el('reset-btn').classList.add('hidden');el('next-btn').classList.remove('hidden');
   el('next-btn').textContent=ST.idx===STAGES.length-1?'看我的診斷卡 →':'下一步 →';
-  el('barmsg').textContent=`第 ${ST.idx+1} 關過關　·　共嘗試 ${ST.tries[ST.idx]} 次`;
+  el('barmsg').textContent=rev?`第 ${ST.idx+1} 關已顯示答案　·　共嘗試 ${ST.tries[ST.idx]} 次`:`第 ${ST.idx+1} 關過關　·　共嘗試 ${ST.tries[ST.idx]} 次`;
   if(s.kind==='tf')drawTF(s,s.items.map(()=>true));
   if(s.opts)document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(s.opts[+b.dataset.i].ok)b.classList.add('right')});
   drawTrack();save();
+}
+const solOf=s=>{if(s.sol)return s.sol;if(SOLS[s.t])return SOLS[s.t];const o={};s.slots.forEach(x=>{if(s.pieces.some(p=>p.id===x.id))o[x.id]=x.id});return o;};
+function revealAnswer(s){
+  if(s.kind==='drag'){place=Object.assign({},solOf(s));sel=null;syncBoard();}
+  else if(s.kind==='grid'){gridv={};s.rows.forEach((r,ri)=>r[1].forEach((v,ci)=>gridv[ri+'_'+ci]=v));drawGrid(s);}
+  else if(s.kind==='tf'){tfv={};s.items.forEach((it,i)=>tfv[i]=it[1]);}
+  else if(s.kind==='order'){seqv=s.items.map((x,i)=>i);drawOrder(s);}
+  else if(s.kind==='fill'){fillv={};const G={};blanksOf(s).forEach(b=>{if(b.grp){const k=b.ei+'|'+b.grp;G[k]=G[k]||0;fillv[b.key]=b.a[G[k]++]||b.a[0];}else fillv[b.key]=b.a[0];});fillOn=null;drawFill(s);}
+  else if(s.kind==='match'){matchv={};s.rows.forEach((rw,i)=>matchv[i]=rw.ans);drawMatch(s);}
+  else if(s.opts){pick=new Set(s.opts.map((o,i)=>o.ok?i:-1).filter(i=>i>=0));document.querySelectorAll('.opt').forEach(b=>b.classList.toggle('sel',pick.has(+b.dataset.i)));}
+  pass(s,true);
+}
+function revealHot(s){
+  const H=ht('f17B',600),RG=(px,py)=>region17(px,py),mk=el('marks');
+  for(;hotStep<s.steps.length;hotStep++){const st=s.steps[hotStep];let n=0,sx=0,sy=0;const P=[];
+    for(let px=0;px<=100;px+=0.5)for(let py=0;py<=100;py+=0.5)if(RG(px,py)===st.want){n++;sx+=px;sy+=py;P.push([px,py]);}
+    if(!n)continue;let cx=sx/n,cy=sy/n;if(RG(cx,cy)!==st.want){let b=P[0],bd=1e9;P.forEach(q=>{const d=(q[0]-cx)**2+(q[1]-cy)**2;if(d<bd){bd=d;b=q}});[cx,cy]=b;}
+    const x=cx*6,y=cy*H/100;
+    mk.insertAdjacentHTML('beforeend',`<circle cx="${x}" cy="${y}" r="11" fill="${ORANGE}" fill-opacity=".9" stroke="#fff" stroke-width="3"/>`+
+      `<rect x="${x-62}" y="${y-44}" width="124" height="26" rx="13" fill="${ORANGE}"/>`+txt(x,y-26,st.lbl,{fs:14,c:'#fff'}));}
+  renderHotSteps(s);pass(s,`已點錯 ${REVEAL_N} 次，橘色標記就是正確位置，請對照答案再讀一次解析：`);
 }
 function check(){
   const s=STAGES[ST.idx];if(answered||s.kind==='hot')return;let r;
@@ -992,8 +1021,9 @@ function check(){
   ST.tries[ST.idx]=(ST.tries[ST.idx]||0)+1;
   if(r.ok){pass(s);return;}
   addTags(r.tags);
+  if(ST.tries[ST.idx]>=REVEAL_N){revealAnswer(s);drawTrack();save();return;}
   const tg=(r.tags||[]).map(t=>`<span class="tag">${TAGS[t][0]}</span>`).join('');
-  el('q-fb').innerHTML=`<div class="fb no"><h4>再試一次</h4><p>${r.msg||'還沒對。'}</p>${tg?`<p>${tg}</p>`:''}</div>`+(s.preRefs?refHTML(s.preRefs):'');bindZoom(el('q-fb'));
+  el('q-fb').innerHTML=`<div class="fb no"><h4>再試一次</h4><p>${r.msg||'還沒對。'}</p>${tg?`<p>${tg}</p>`:''}<p class="left">再答錯 ${REVEAL_N-ST.tries[ST.idx]} 次，就會自動顯示答案。</p></div>`+(s.preRefs?refHTML(s.preRefs):'');bindZoom(el('q-fb'));
   el('barmsg').textContent=`已嘗試 ${ST.tries[ST.idx]} 次`;
   drawTrack();save();
 }
@@ -1003,7 +1033,7 @@ function finish(){
   ['play','bar'].forEach(x=>el(x).classList.add('hidden'));
   const mins=Math.max(1,Math.round((Date.now()-ST.t0)/60000)),tr=STAGES.map((s,i)=>ST.tries[i]||0);
   const one=tr.filter(t=>t===1).length,two=tr.filter(t=>t===2).length,hard=tr.filter(t=>t>=3).length,w=ST.who;
-  const rows=STAGES.map((s,i)=>{const t=tr[i],c=t>=3?'t3':t===2?'t2':'t1';return `<div class="row ${c}"><span class="i">${String(i+1).padStart(2,'0')}</span><span>${s.t}</span><span class="kd">${KSHORT[s.kind]}</span><span class="m">${t} 次</span></div>`}).join('');
+  const RV=ST.revealed||{};const rows=STAGES.map((s,i)=>{const t=tr[i],c=(t>=3||RV[i])?'t3':t===2?'t2':'t1';return `<div class="row ${c}"><span class="i">${String(i+1).padStart(2,'0')}</span><span>${s.t}${RV[i]?'<span class="tag" style="margin-left:8px">看了答案</span>':''}</span><span class="kd">${KSHORT[s.kind]}</span><span class="m">${t} 次</span></div>`}).join('');
   const mk=Object.keys(ST.tags).sort((a,b)=>ST.tags[b]-ST.tags[a]);
   const miss=mk.length?mk.map(k=>`<div class="mi"><b>${TAGS[k][0]}　<span>觸發 ${ST.tags[k]} 次</span></b>${TAGS[k][1]}<br><span>回頭看：${TAGS[k][2]}</span></div>`).join('')
     :`<div class="clean">沒有觸發任何迷思概念——每一關的判斷都一次到位。</div>`;
@@ -1012,6 +1042,7 @@ function finish(){
     <div class="stats"><div class="stat"><div class="v" style="color:var(--ok)">${one}</div><div class="l">一次過關</div></div>
       <div class="stat"><div class="v" style="color:var(--warn)">${two}</div><div class="l">試了 2 次</div></div>
       <div class="stat"><div class="v" style="color:var(--no)">${hard}</div><div class="l">試了 3 次以上</div></div>
+      <div class="stat"><div class="v" style="color:var(--warn)">${Object.keys(ST.revealed||{}).length}</div><div class="l">看了答案</div></div>
       <div class="stat"><div class="v">${tr.reduce((a,b)=>a+b,0)}</div><div class="l">總作答次數</div></div></div>
     <h3 class="sec">逐關紀錄</h3><div class="rows">${rows}</div>
     <h3 class="sec">需要回頭補的觀念</h3><div class="miss">${miss}</div>
