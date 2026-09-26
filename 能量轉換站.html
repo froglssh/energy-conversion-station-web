@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>能量轉換站</title>
+<title>能量轉換站｜優化版</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -45,6 +45,7 @@ sub,sup{line-height:0}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
 .wrap{max-width:1180px;margin:0 auto;padding-inline:16px}
 .hidden{display:none!important}
+.version{display:inline-block;margin-bottom:8px;padding:2px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font:600 12px var(--mono);letter-spacing:.09em}
 
 /* 進度軌 */
 .topbar{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
@@ -55,7 +56,9 @@ sub,sup{line-height:0}
 .crumb b{color:var(--ink-2);font-weight:500}
 .linkbtn{margin-left:auto;background:none;border:0;color:var(--accent);font-size:14px;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px}
 .track{display:flex;gap:3px}
-.tseg{flex:1;min-width:0;height:29px;border-radius:3px;background:var(--line-soft);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--ink-3);position:relative;transition:background .25s,color .25s}
+.tseg{flex:1;min-width:0;height:29px;border:0;padding:0;border-radius:3px;background:var(--line-soft);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--ink-3);position:relative;transition:background .25s,color .25s;cursor:pointer}
+.tseg:hover{filter:brightness(.96)}
+.tseg.attempted{background:var(--warn-soft);color:var(--warn)}
 .tseg[data-g="g1"].done{background:var(--g1-soft);color:var(--g1)}
 .tseg[data-g="g2"].done{background:var(--g2-soft);color:var(--g2)}
 .tseg[data-g="g3"].done{background:var(--g3-soft);color:var(--g3)}
@@ -163,7 +166,13 @@ figcaption{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:
 .bar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
 .barin{max-width:1120px;margin:0 auto;display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
 .barmsg{flex:1 1 100%;order:-1;min-width:0;font-size:15px;color:var(--ink-2)}
+.free-nav{display:flex;align-items:center;gap:6px;margin-right:auto}
+.free-nav label{font-size:14px;color:var(--ink-2);white-space:nowrap}
+.free-nav select{max-width:min(42vw,310px);min-width:155px;padding:9px 30px 9px 11px;border:1.5px solid var(--line);border-radius:9px;background:var(--surface-2);color:var(--ink);font:inherit;font-size:14px}
+.btn.small{padding:9px 14px;font-size:14px}
 @media (min-width:620px){.barmsg{flex:1 1 auto;order:0}}
+@media (max-width:619px){.barin{gap:7px}.free-nav{flex:1 1 100%;margin:0}.free-nav select{flex:1;max-width:none;min-width:0}.barmsg{font-size:13px}.btn.small{padding:9px 11px;font-size:13px}}
+@media (max-width:619px){main{padding-bottom:215px}}
 .btn{padding:11px 22px;border-radius:9px;border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink);font-weight:600;cursor:pointer;transition:filter .15s}
 .btn:hover{filter:brightness(1.08)} .btn.ghost{background:transparent;color:var(--accent)}
 .btn:disabled{opacity:.4;cursor:not-allowed;filter:none}
@@ -204,6 +213,7 @@ figcaption{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:
 .ltext ul{margin:0 0 12px;padding-left:1.2em} .ltext li{margin-bottom:6px}
 .ltext b.k1{color:var(--g1)} .ltext b.k2{color:var(--g2)} .ltext b.k3{color:var(--g3)} .ltext b.k4{color:var(--accent)}
 .lnav{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap}
+.lnav .rgt{display:flex;gap:10px;flex-wrap:wrap}
 .dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 .dots button{width:30px;height:30px;border-radius:7px;border:1.5px solid var(--line);background:var(--surface);font-family:var(--mono);font-size:12px;cursor:pointer;color:var(--ink-3)}
 .dots button.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
@@ -233,12 +243,15 @@ figcaption{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:
 .stat .v{font-family:var(--mono);font-size:28px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.2}
 .stat .l{font-size:13px;color:var(--ink-3);margin-top:2px}
 .rows{display:flex;flex-direction:column;gap:5px;margin-bottom:20px}
-.row{display:grid;grid-template-columns:32px 1fr auto auto;gap:12px;align-items:center;font-size:15.5px;padding:7px 10px;border-radius:7px;background:var(--surface-2)}
+.row{display:grid;grid-template-columns:32px 1fr auto auto;gap:12px;align-items:center;width:100%;text-align:left;color:var(--ink);font:inherit;font-size:15.5px;padding:7px 10px;border:0;border-radius:7px;background:var(--surface-2);cursor:pointer}
+.row:hover{outline:1px solid var(--accent)}
 .row .i{font-family:var(--mono);font-size:12.5px;color:var(--ink-3)}
 .row .kd{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
 .row .m{font-family:var(--mono);font-size:13.5px;letter-spacing:.06em}
 .row.t1 .m{color:var(--ok)} .row.t2 .m{color:var(--warn)} .row.t3 .m{color:var(--no)}
 .row.t3{background:var(--no-soft)} .row.t2{background:var(--warn-soft)}
+.row.skip{background:var(--line-soft)} .row.skip .m{color:var(--ink-3)}
+.row.pending{background:var(--warn-soft)} .row.pending .m{color:var(--warn)}
 h3.sec{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;color:var(--ink-3);margin:0 0 9px;padding-bottom:6px;border-bottom:1px solid var(--line)}
 .miss{display:flex;flex-direction:column;gap:9px;margin-bottom:20px}
 .mi{border-left:4px solid var(--warn);background:var(--warn-soft);border-radius:0 8px 8px 0;padding:11px 15px;font-size:15.5px}
@@ -312,15 +325,16 @@ table.sum.pg th{background:#4E8A2E} table.sum.rs th{background:#C9612A}
 <main class="wrap">
   <section id="intro">
     <div class="hero">
+      <span class="version">教學互動 · 優化版</span>
       <h1>能量轉換站</h1>
       <p class="lede">讀完課本 P24–P30 和「光合作用與呼吸作用」簡報之後，換你來追蹤能量：光能怎麼在葉綠體裡變成醣類的化學能？醣類又怎麼在細胞質液和粒線體裡變成 ATP？</p>
       <div class="heroimg" id="heroimg"></div>
       <ul class="rules">
-        <li><span class="n">1</span><span>建議先看<b>圖解教學</b>（15 張圖卡，圖片都取自課本與簡報；其中 3 張是<b>光合作用、有氧呼吸、發酵作用</b>的簡報原始動畫，可逐步播放或全螢幕投影），再進入 <b>8 道關卡</b>。</span></li>
-        <li><span class="n">2</span><span>關卡有很多種玩法：<div class="kinds"><span>拖曳貼標籤</span><span>特徵分類</span><span>方程式填空</span><span>比較表勾選</span><span>是非快答</span></div></span></li>
+        <li><span class="n">1</span><span>建議先看<b>圖解教學</b>（15 張圖卡，含光合作用、有氧呼吸、發酵作用等動態演示），再挑戰 <b>12 道題目</b>。作答時可隨時選題、跳題或交卷。</span></li>
+        <li><span class="n">2</span><span>關卡有很多種玩法：<div class="kinds"><span>拖曳貼標籤</span><span>點圖找位置</span><span>方程式填空</span><span>步驟排序</span><span>圖表判讀</span><span>比較表勾選</span><span>是非快答</span><span>學測多選</span></div></span></li>
         <li><span class="n">3</span><span>拖曳題可以<b>用拖的</b>，也可以<b>先點一張卡片、再點目標位置</b>；手機上點兩下比較穩。</span></li>
-        <li><span class="n">4</span><span>答錯不會擋住你，但每一關試了幾次都會記錄下來，最後變成一張<b>學習診斷卡</b>，請截圖交給老師。</span></li>
-        <li><span class="n">5</span><span>答錯不會擋住你：同一題答錯 <b>5 次</b>（點圖題是點錯 5 次），就會<b>自動顯示答案</b>並附上解析。是否看了答案也會記錄在學習診斷卡上。</span></li>
+        <li><span class="n">4</span><span>提交次數與點圖錯誤會記在<b>學習診斷卡</b>；答錯 5 次會自動顯示答案與解析。完成後可截圖交給老師。</span></li>
+        <li><span class="n">5</span><span>題目可任意選擇。尚未完成的題目可跳過，交卷前也能再回頭補答；答題紀錄會整理成學習診斷卡。</span></li>
       </ul>
       <div class="fields">
         <div class="field"><label for="f-name">姓名</label><input id="f-name" type="text" autocomplete="off" placeholder="王小明"></div>
@@ -328,9 +342,9 @@ table.sum.pg th{background:#4E8A2E} table.sum.rs th{background:#C9612A}
         <div class="field"><label for="f-no">座號</label><input id="f-no" type="text" inputmode="numeric" autocomplete="off" placeholder="07"></div>
       </div>
       <div class="herobtns">
-        <button class="btn ghost showbtn" id="go-show" title="光合作用與呼吸作用的簡報動畫，鍵盤 ← → 逐步播放">▶ 簡報動畫模式（老師上課用）</button>
         <button class="btn ghost" id="go-learn">先看圖解教學</button>
         <button class="btn" id="go">直接開始闖關</button>
+        <button class="btn ghost showbtn" id="go-show" title="光合作用與呼吸作用的簡報動畫，鍵盤 ← → 逐步播放">▶ 簡報動畫模式（老師上課用）</button>
       </div>
     </div>
   </section>
@@ -340,7 +354,7 @@ table.sum.pg th{background:#4E8A2E} table.sum.rs th{background:#C9612A}
     <div class="lnav">
       <button class="btn ghost" id="l-prev">← 上一張</button>
       <div class="dots" id="l-dots"></div>
-      <button class="btn" id="l-next">下一張 →</button>
+      <div class="rgt"><button class="btn ghost hidden" id="l-resume">回到剛才的題目</button><button class="btn ghost showbtn" id="l-show" title="從這張圖卡對應的簡報頁開始播放">▶ 簡報動畫</button><button class="btn" id="l-next">下一張 →</button></div>
     </div>
   </div></section>
 
@@ -367,9 +381,13 @@ table.sum.pg th{background:#4E8A2E} table.sum.rs th{background:#C9612A}
 
 <div class="bar hidden" id="bar"><div class="barin">
   <span class="barmsg" id="barmsg"></span>
+  <div class="free-nav"><label for="question-select">選擇題目</label><select id="question-select" aria-label="直接跳到指定題目"></select></div>
+  <button class="btn ghost small" id="prev-btn">← 上一題</button>
+  <button class="btn ghost small" id="skip-btn">跳過此題 →</button>
   <button class="btn ghost" id="reset-btn">重置這一關</button>
   <button class="btn" id="check-btn">檢查答案</button>
   <button class="btn hidden" id="next-btn">下一步 →</button>
+  <button class="btn small" id="finish-btn">交卷／看紀錄</button>
 </div></div>
 
 <script>
@@ -835,10 +853,10 @@ const ALL_STAGES=[
  why:'兩者都經過糖解作用、都會產生 ATP。只有乳酸發酵才把丙酮酸還原成乳酸；只有有氧呼吸的部分過程在粒線體，發酵作用在細胞質液；只有酒精發酵會產生酒精。（簡報 p27 解析）',
  refs:[R('f18a','課本 P28 圖1-18a'),R('f18b','課本 P29 圖1-18b')]}
 ];
-/* 精選 8 關：ATP 循環、光合作用進出、光反應 vs 固碳反應、有氧呼吸、反應式、三種呼吸比較、是非快答、能量循環
-   （其餘關卡保留在 ALL_STAGES 中，要加回來只要把編號放進 KEEP） */
-const KEEP=[0,2,3,7,8,10,11,12];
+/* 精選 12 關：ATP 循環、點圖找位置、葉綠體進出、光反應vs固碳反應、光合作用步驟、圖表判讀、有氧呼吸路線圖、反應式填空、發酵作用岔路、三種呼吸比較、是非快答、物質循環與能量流動 */
+const KEEP=[0,1,2,3,4,5,7,8,9,10,11,12];
 const STAGES=KEEP.map(i=>ALL_STAGES[i]);
+const LEARN_FOR_STAGE=[1,2,7,7,4,7,9,9,11,13,14,14];
 
 </script>
 <script>
@@ -846,19 +864,42 @@ const el=id=>document.getElementById(id);
 const KEY='energygame.v2';
 const REVEAL_N=5;   /* 答錯幾次後自動顯示答案 */
 const SOLS={"光反應還是固碳反應？": {"L0": "a1", "L1": "a2", "L2": "a3", "L3": "a4", "L4": "a5", "C0": "b1", "C1": "b2", "C2": "b3", "C3": "b4", "C4": "b5"}};
-let ST={idx:0,tries:{},tags:{},who:{n:'',c:'',s:''},t0:0,done:false,passed:{}};
+let ST={idx:0,tries:{},tags:{},who:{n:'',c:'',s:''},t0:0,done:false,passed:{},drafts:{},revealed:{}};
 let place={},sel=null,answered=false,pick=new Set(),order=[],layout={};
-let seqv=[],fillv={},fillOn=null,matchv={},gridv={},tfv={},hotStep=0,hotMarks=[],optPerm=[];
+let seqv=[],fillv={},fillOn=null,matchv={},gridv={},tfv={},hotStep=0,optPerm=[];
+let activeStage=false;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(ST))}catch(e){}}
 function load(){try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r)}catch(e){}return null}
 const GN={g1:'ATP 與光合作用',g2:'呼吸作用',g3:'能量轉換總整理'};
 
+function saveDraft(){
+  if(ST.done||!activeStage)return;
+  ST.drafts=ST.drafts||{};
+  const d={};
+  if(place&&Object.keys(place).length)d.place={...place};
+  if(pick&&pick.size)d.pick=[...pick];
+  if(seqv&&seqv.length)d.seqv=[...seqv];
+  if(fillv&&Object.keys(fillv).length)d.fillv={...fillv};
+  if(matchv&&Object.keys(matchv).length)d.matchv={...matchv};
+  if(gridv&&Object.keys(gridv).length)d.gridv={...gridv};
+  if(tfv&&Object.keys(tfv).length)d.tfv={...tfv};
+  if(hotStep)d.hotStep=hotStep;
+  const mk=el('marks');if(mk&&mk.innerHTML.trim())d.marks=mk.innerHTML;
+  ST.drafts[ST.idx]=d;
+  save();
+}
+
 /* ── 進度軌 ── */
 function drawTrack(){
-  el('track').innerHTML=STAGES.map((s,i)=>{const t=ST.tries[i],cls=i===ST.idx&&!ST.done?'now':(t!=null&&ST.passed&&ST.passed[i]?'done':'');
-    return `<div class="tseg ${cls}" data-g="${s.g}" data-tries="${t==null?'':Math.min(t,3)}" title="${s.t}">${i+1}</div>`}).join('');
+  el('track').innerHTML=STAGES.map((s,i)=>{const t=ST.tries[i],cls=i===ST.idx&&!ST.done?'now':(t!=null&&ST.passed&&ST.passed[i]?'done':(t!=null&&t>0?'attempted':''));
+    return `<button type="button" class="tseg ${cls}" data-g="${s.g}" data-i="${i}" data-tries="${t==null?'':Math.min(t,3)}" title="${s.t}">${i+1}</button>`}).join('');
+  el('track').querySelectorAll('.tseg').forEach(b=>b.onclick=()=>{if(!ST.done)show(+b.dataset.i)});
   const s=STAGES[ST.idx];
   el('crumb').innerHTML=`${GN[s.g]} <b>·</b> ${s.t} <b>·</b> ${ST.idx+1} / ${STAGES.length}`;
+  const qsel=el('question-select');
+  if(qsel){
+    qsel.innerHTML=STAGES.map((st,idx)=>`<option value="${idx}" ${idx===ST.idx?'selected':''}>第 ${idx+1} 題：${st.t}（${KSHORT[st.kind]}）${ST.passed&&ST.passed[idx]?' ✓':ST.tries[idx]?' · 待完成':''}</option>`).join('');
+  }
 }
 
 /* ── 操作板（拖曳） ── */
@@ -1034,20 +1075,34 @@ function drawTF(s,mark){
 }
 
 function show(i){
+  if(i<0||i>=STAGES.length)return;
+  saveDraft();
+  if(ST.done){ST.done=false;el('done').classList.add('hidden');['play','bar'].forEach(x=>el(x).classList.remove('hidden'));}
   ST.idx=i;place={};sel=null;pick.clear();answered=false;seqv=[];fillv={};fillOn=null;matchv={};gridv={};tfv={};hotStep=0;
+  const draft=ST.drafts&&ST.drafts[i];
+  if(draft){
+    place={...draft.place};pick=new Set(draft.pick||[]);seqv=[...(draft.seqv||[])];fillv={...draft.fillv};
+    matchv={...draft.matchv};gridv={...draft.gridv};tfv={...draft.tfv};hotStep=draft.hotStep||0;
+  }
   const s=STAGES[i];
-  el('check-btn').classList.toggle('hidden',s.kind==='hot');el('next-btn').classList.add('hidden');
+  el('check-btn').classList.toggle('hidden',s.kind==='hot');el('next-btn').classList.add('hidden');el('skip-btn').classList.remove('hidden');
   el('reset-btn').classList.toggle('hidden',!['drag','order','fill','grid','tf','match'].includes(s.kind));el('barmsg').textContent=s.kind==='hot'?'在圖上點一下作答':'';
-  renderPanel(s);renderBoard(s);drawTrack();save();window.scrollTo({top:0,behavior:'smooth'});
+  renderPanel(s);renderBoard(s);
+  if(draft&&(s.kind==='single'||s.kind==='multi'))el('q-opts').querySelectorAll('.opt').forEach(b=>b.classList.toggle('sel',pick.has(+b.dataset.i)));
+  if(s.kind==='hot'&&draft?.marks)el('marks').innerHTML=draft.marks;
+  if(ST.passed&&ST.passed[i])el('barmsg').textContent='本題已有完成紀錄；可以重新練習，或選擇其他題目。';
+  activeStage=true;drawTrack();save();window.scrollTo({top:0,behavior:'smooth'});
 }
 function addTags(t){(t||[]).forEach(x=>{ST.tags[x]=(ST.tags[x]||0)+1})}
 function pass(s,rev){
   answered=true;ST.passed=ST.passed||{};ST.passed[ST.idx]=true;
+  if(ST.drafts)delete ST.drafts[ST.idx];
   if(rev){ST.revealed=ST.revealed||{};ST.revealed[ST.idx]=true;}
   el('q-fb').innerHTML=(rev?`<div class="fb rev"><h4>答案已顯示</h4><p>${rev===true?`已答錯 ${REVEAL_N} 次，正確答案已經自動顯示，請對照答案再讀一次解析：`:rev}</p><p>${s.why}</p></div>`:`<div class="fb ok"><h4>✓ 正確</h4><p>${s.why}</p></div>`)+refHTML(s.refs);bindZoom(el('q-fb'));
   el('check-btn').classList.add('hidden');el('reset-btn').classList.add('hidden');el('next-btn').classList.remove('hidden');
   el('next-btn').textContent=ST.idx===STAGES.length-1?'看我的診斷卡 →':'下一步 →';
   el('barmsg').textContent=rev?`第 ${ST.idx+1} 關已顯示答案　·　共嘗試 ${ST.tries[ST.idx]} 次`:`第 ${ST.idx+1} 關過關　·　共嘗試 ${ST.tries[ST.idx]} 次`;
+  el('skip-btn').classList.add('hidden');
   if(s.kind==='tf')drawTF(s,s.items.map(()=>true));
   if(s.opts)document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(s.opts[+b.dataset.i].ok)b.classList.add('right')});
   drawTrack();save();
@@ -1125,34 +1180,46 @@ function check(){
 }
 /* ── 診斷卡 ── */
 function finish(){
+  saveDraft();activeStage=false;
   ST.done=true;save();
   ['play','bar'].forEach(x=>el(x).classList.add('hidden'));
   const mins=Math.max(1,Math.round((Date.now()-ST.t0)/60000)),tr=STAGES.map((s,i)=>ST.tries[i]||0);
-  const one=tr.filter(t=>t===1).length,two=tr.filter(t=>t===2).length,hard=tr.filter(t=>t>=3).length,w=ST.who;
-  const RV=ST.revealed||{};const rows=STAGES.map((s,i)=>{const t=tr[i],c=(t>=3||RV[i])?'t3':t===2?'t2':'t1';return `<div class="row ${c}"><span class="i">${String(i+1).padStart(2,'0')}</span><span>${s.t}${RV[i]?'<span class="tag" style="margin-left:8px">看了答案</span>':''}</span><span class="kd">${KSHORT[s.kind]}</span><span class="m">${t} 次</span></div>`}).join('');
+  const passed=ST.passed||{},one=tr.filter((t,i)=>passed[i]&&t===1).length,two=tr.filter((t,i)=>passed[i]&&t===2).length,hard=tr.filter((t,i)=>passed[i]&&t>=3).length;
+  const skipped=tr.filter(t=>t===0).length,pending=tr.filter((t,i)=>t>0&&!passed[i]).length,w=ST.who;
+  const safe=v=>String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const RV=ST.revealed||{};const rows=STAGES.map((s,i)=>{const t=tr[i],c=!t?'skip':!passed[i]?'pending':(t>=3||RV[i])?'t3':t===2?'t2':'t1';
+    const count=s.kind==='hot'?`點錯 ${Math.max(0,t-1)} 次`:`提交 ${t} 次`;
+    const label=!t?'未作答':!passed[i]?`待完成 · ${count}`:RV[i]?`看了答案 · ${count}`:count;
+    return `<button type="button" class="row ${c}" data-i="${i}" aria-label="返回第 ${i+1} 題：${s.t}，${label}"><span class="i">${String(i+1).padStart(2,'0')}</span><span>${s.t}</span><span class="kd">${KSHORT[s.kind]}</span><span class="m">${label}</span></button>`}).join('');
   const mk=Object.keys(ST.tags).sort((a,b)=>ST.tags[b]-ST.tags[a]);
   const miss=mk.length?mk.map(k=>`<div class="mi"><b>${TAGS[k][0]}　<span>觸發 ${ST.tags[k]} 次</span></b>${TAGS[k][1]}<br><span>回頭看：${TAGS[k][2]}</span></div>`).join('')
-    :`<div class="clean">沒有觸發任何迷思概念——每一關的判斷都一次到位。</div>`;
+    :`<div class="clean">目前沒有需要回頭補的觀念標記；未作答的題目仍待完成。</div>`;
   el('done').innerHTML=`<div class="card2"><h1>光合作用與呼吸作用　學習診斷卡</h1>
-    <p class="who">${w.n||'（未填姓名）'}　|　${w.c||'—'} 班　${w.s?'座號 '+w.s:''}　|　${new Date().toLocaleDateString('zh-TW')}　|　用時約 ${mins} 分鐘</p>
+    <p class="who">${safe(w.n)||'（未填姓名）'}　|　${safe(w.c)||'—'} 班　${w.s?'座號 '+safe(w.s):''}　|　${new Date().toLocaleDateString('zh-TW')}　|　用時約 ${mins} 分鐘</p>
     <div class="stats"><div class="stat"><div class="v" style="color:var(--ok)">${one}</div><div class="l">一次過關</div></div>
       <div class="stat"><div class="v" style="color:var(--warn)">${two}</div><div class="l">試了 2 次</div></div>
       <div class="stat"><div class="v" style="color:var(--no)">${hard}</div><div class="l">試了 3 次以上</div></div>
       <div class="stat"><div class="v" style="color:var(--warn)">${Object.keys(ST.revealed||{}).length}</div><div class="l">看了答案</div></div>
-      <div class="stat"><div class="v">${tr.reduce((a,b)=>a+b,0)}</div><div class="l">總作答次數</div></div></div>
-    <h3 class="sec">逐關紀錄</h3><div class="rows">${rows}</div>
+      <div class="stat"><div class="v">${skipped}</div><div class="l">未作答</div></div>
+      <div class="stat"><div class="v">${pending}</div><div class="l">待完成</div></div>
+      <div class="stat"><div class="v">${tr.reduce((a,b,i)=>a+(STAGES[i].kind==='hot'?0:b),0)}</div><div class="l">題目提交次數</div></div>
+      <div class="stat"><div class="v">${tr.reduce((a,b,i)=>a+(STAGES[i].kind==='hot'?Math.max(0,b-1):0),0)}</div><div class="l">點圖錯誤次數</div></div></div>
+    <h3 class="sec">逐關紀錄 · 點選題目可回去補答</h3><div class="rows">${rows}</div>
     <h3 class="sec">需要回頭補的觀念</h3><div class="miss">${miss}</div>
     <div class="barin" style="padding:0"><span class="barmsg">把這張卡截圖，上傳給老師。</span>
-      <button class="btn ghost" id="relearn">回圖解教學</button><button class="btn" id="again">再玩一次</button></div></div>`;
+      <button class="btn ghost" id="relearn">回圖解教學</button><button class="btn ghost" id="back-to-play">回到題目</button><button class="btn" id="again">再玩一次</button></div></div>`;
   el('done').classList.remove('hidden');drawTrack();
+  el('done').querySelectorAll('.row').forEach(b=>b.onclick=()=>show(+b.dataset.i));
+  el('back-to-play').onclick=()=>show(ST.idx);
   el('again').onclick=()=>{ST={idx:0,tries:{},tags:{},passed:{},who:ST.who,t0:Date.now(),done:false};STAGES.forEach(s=>{delete s._disp;delete s._bank;delete s._perm});el('done').classList.add('hidden');startPlay();};
   el('relearn').onclick=()=>{el('done').classList.add('hidden');openLearn(0)};
   window.scrollTo({top:0,behavior:'smooth'});
 }
 /* ── 畫面切換 ── */
 function grabWho(){ST.who={n:el('f-name').value.trim(),c:el('f-cls').value.trim(),s:el('f-no').value.trim()};save();}
-function openLearn(i){['intro','play','bar','done'].forEach(x=>el(x).classList.add('hidden'));el('topbar').classList.add('hidden');el('learn').classList.remove('hidden');showLearn(i||0);}
+function openLearn(i){saveDraft();activeStage=false;['intro','play','bar','done'].forEach(x=>el(x).classList.add('hidden'));el('topbar').classList.add('hidden');el('learn').classList.remove('hidden');el('l-resume').classList.remove('hidden');showLearn(i||0);}
 function startPlay(){
+  clearInterval(FT);FT=null;
   if(!ST.t0)ST.t0=Date.now();
   ['intro','learn','done'].forEach(x=>el(x).classList.add('hidden'));
   ['play','topbar','bar'].forEach(x=>el(x).classList.remove('hidden'));
@@ -1160,12 +1227,17 @@ function startPlay(){
   show(ST.idx||0);
 }
 el('go').onclick=()=>{grabWho();startPlay()};
-el('go-learn').onclick=()=>{grabWho();openLearn(0)};
+el('go-learn').onclick=()=>{grabWho();openLearn(0);el('l-resume').classList.add('hidden');};
 el('go-show').onclick=()=>openShow(0);
-el('to-learn').onclick=()=>openLearn(0);
+el('to-learn').onclick=()=>openLearn(LEARN_FOR_STAGE[ST.idx]||0);
 el('l-prev').onclick=()=>LI>0&&showLearn(LI-1);
+el('l-resume').onclick=startPlay;
 el('l-next').onclick=()=>LI<LEARN.length-1?showLearn(LI+1):startPlay();
 el('check-btn').onclick=check;
+el('question-select').onchange=e=>show(Number(e.target.value));
+el('prev-btn').onclick=()=>show(ST.idx-1);
+el('skip-btn').onclick=()=>ST.idx+1<STAGES.length?show(ST.idx+1):finish();
+el('finish-btn').onclick=finish;
 el('reset-btn').onclick=()=>{if(answered)return;const s=STAGES[ST.idx];place={};sel=null;seqv=[];fillv={};fillOn=null;matchv={};gridv={};tfv={};
   if(s.kind==='drag')syncBoard();else renderPanel(s);el('q-fb').innerHTML=s.preRefs?refHTML(s.preRefs):'';bindZoom(el('q-fb'));el('barmsg').textContent='';};
 el('next-btn').onclick=()=>ST.idx+1<STAGES.length?show(ST.idx+1):finish();
@@ -1180,5 +1252,6 @@ el('heroimg').innerHTML=`<img src="${IMG.f19}" alt="課本 P30 圖1-19 光合作
     ST=Object.assign(ST,saved);el('f-name').value=ST.who.n||'';el('f-cls').value=ST.who.c||'';el('f-no').value=ST.who.s||'';
     el('go').textContent=`繼續闖關（第 ${ST.idx+1} 關）`;}
 })();
+window.addEventListener('pagehide',saveDraft);
 </script>
 </body></html>
