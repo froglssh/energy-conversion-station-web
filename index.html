@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>能量轉換站｜優化版</title>
+<title>能量轉換站｜完整優化版</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -303,6 +303,31 @@ table.sum.pg th{background:#4E8A2E} table.sum.rs th{background:#C9612A}
 #show .shno{font-family:var(--mono);font-size:13px;color:#C8BBA8}
 .fb.rev{background:var(--warn-soft);border-color:var(--warn)} .fb.rev h4{color:var(--warn)}
 .fb .left{font-size:14px;color:var(--ink-3)}
+
+/* 完整優化版：精簡手機固定導覽，將進度狀態留給螢幕閱讀器與題目選單。 */
+.source-note{max-width:760px;margin:12px 0;color:var(--ink-3);font-size:13px;line-height:1.55}
+@media (max-width:619px){
+  .topin{gap:4px;padding-block:5px}.brand{font-size:16px}.crumb{font-size:11px}.tseg{height:24px;font-size:10px}.legend{display:none}
+  .bar{padding:7px 10px calc(7px + env(safe-area-inset-bottom,0px))}
+  .barin{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"msg nav nav" "prev skip reset" "check next finish";gap:6px;align-items:center}
+  .barmsg{grid-area:msg;order:0;flex:none;font-size:11.5px;line-height:1.25;max-height:2.5em;overflow:hidden}
+  .free-nav{grid-area:nav;display:flex;min-width:0;margin:0;gap:5px}
+  .free-nav label{font-size:12px}.free-nav select{min-width:0;max-width:none;width:100%;padding:7px 22px 7px 8px;font-size:12px}
+  #prev-btn{grid-area:prev}#skip-btn{grid-area:skip}#reset-btn{grid-area:reset}#check-btn{grid-area:check}#next-btn{grid-area:next}#finish-btn{grid-area:finish}
+  .bar .btn{width:100%;min-width:0;padding:8px 5px;font-size:12px;white-space:nowrap}
+  main{padding-bottom:145px}
+  .hero .source-note{font-size:12px}
+  .gtab{font-size:13px}.gtab td:first-child{width:40%;font-size:12px;line-height:1.35;padding:5px}.gtab td.c{width:20%;padding:4px 1px}.gbtn{width:38px;height:38px}
+  .slotg{cursor:pointer}.slotg:focus .slot{stroke-width:4;stroke:#0E7C74}
+  .hotchoices{display:flex;gap:8px;flex-wrap:wrap}.hotchoices .seg{min-height:44px;flex:1 1 145px}
+}
+.tseg.draft{background:#E4F4F1;color:#0E7C74;outline:1px dashed #0E7C74;outline-offset:-3px}
+.tseg.revealed{background:var(--warn-soft);color:var(--warn);box-shadow:inset 0 -3px var(--warn)}
+.row.drafted{border-color:var(--accent);background:var(--accent-soft)}
+.slotg{cursor:pointer}.slotg:focus .slot{stroke-width:4;stroke:#0E7C74}
+.hotchoices{display:flex;gap:8px;flex-wrap:wrap}.hotchoices .seg{min-height:44px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}}
+
 </style>
 </head>
 <body>
@@ -318,32 +343,36 @@ table.sum.pg th{background:#4E8A2E} table.sum.rs th{background:#C9612A}
     <span><i style="background:var(--g1)"></i>ATP 與光合作用</span>
     <span><i style="background:var(--g2)"></i>呼吸作用</span>
     <span><i style="background:var(--g3)"></i>能量轉換總整理</span>
-    <span><i style="background:var(--warn)"></i>試了 3 次以上</span>
+    <span><i style="background:var(--accent)"></i>作答中</span>
+    <span><i style="background:var(--warn)"></i>待完成／看過答案</span>
+    <span><i style="background:var(--line-soft)"></i>未開始</span>
   </div>
 </div></header>
 
 <main class="wrap">
   <section id="intro">
     <div class="hero">
-      <span class="version">教學互動 · 優化版</span>
+      <span class="version">教學互動 · 完整優化版</span>
       <h1>能量轉換站</h1>
       <p class="lede">讀完課本 P24–P30 和「光合作用與呼吸作用」簡報之後，換你來追蹤能量：光能怎麼在葉綠體裡變成醣類的化學能？醣類又怎麼在細胞質液和粒線體裡變成 ATP？</p>
       <div class="heroimg" id="heroimg"></div>
       <ul class="rules">
-        <li><span class="n">1</span><span>建議先看<b>圖解教學</b>（15 張圖卡，含光合作用、有氧呼吸、發酵作用等動態演示），再挑戰 <b>12 道題目</b>。作答時可隨時選題、跳題或交卷。</span></li>
+        <li><span class="n">1</span><span>建議先看<b>圖解教學</b>（15 張圖卡，含光合作用、有氧呼吸、發酵作用等動態演示），再挑戰 <b>17 道題目</b>。作答時可隨時選題、跳題或交卷。</span></li>
         <li><span class="n">2</span><span>關卡有很多種玩法：<div class="kinds"><span>拖曳貼標籤</span><span>點圖找位置</span><span>方程式填空</span><span>步驟排序</span><span>圖表判讀</span><span>比較表勾選</span><span>是非快答</span><span>學測多選</span></div></span></li>
         <li><span class="n">3</span><span>拖曳題可以<b>用拖的</b>，也可以<b>先點一張卡片、再點目標位置</b>；手機上點兩下比較穩。</span></li>
         <li><span class="n">4</span><span>提交次數與點圖錯誤會記在<b>學習診斷卡</b>；答錯 5 次會自動顯示答案與解析。完成後可截圖交給老師。</span></li>
-        <li><span class="n">5</span><span>題目可任意選擇。尚未完成的題目可跳過，交卷前也能再回頭補答；答題紀錄會整理成學習診斷卡。</span></li>
+        <li><span class="n">5</span><span>題目可任意選擇。尚未完成的題目可跳過，交卷前也能再回頭補答；答題紀錄會整理成學習診斷卡；作答中的草稿會即時保存，完成後可回看上次紀錄。</span></li>
       </ul>
       <div class="fields">
         <div class="field"><label for="f-name">姓名</label><input id="f-name" type="text" autocomplete="off" placeholder="王小明"></div>
         <div class="field"><label for="f-cls">班級</label><input id="f-cls" type="text" autocomplete="off" placeholder="103"></div>
         <div class="field"><label for="f-no">座號</label><input id="f-no" type="text" inputmode="numeric" autocomplete="off" placeholder="07"></div>
       </div>
+      <p class="source-note">課本頁碼依本冊標示；網頁原有的「簡報 pX」標記依舊版保留，新增學測題標註原簡報張數。</p>
       <div class="herobtns">
         <button class="btn ghost" id="go-learn">先看圖解教學</button>
         <button class="btn" id="go">直接開始闖關</button>
+        <button class="btn ghost hidden" id="resume-done">查看上次診斷卡</button>
         <button class="btn ghost showbtn" id="go-show" title="光合作用與呼吸作用的簡報動畫，鍵盤 ← → 逐步播放">▶ 簡報動畫模式（老師上課用）</button>
       </div>
     </div>
@@ -360,7 +389,7 @@ table.sum.pg th{background:#4E8A2E} table.sum.rs th{background:#C9612A}
 
   <section id="play" class="hidden"><div class="grid" id="grid">
     <div class="stage" id="stagecard">
-      <svg class="board" id="board" viewBox="0 0 600 530" role="img" aria-label="操作區"></svg>
+      <svg class="board" id="board" viewBox="0 0 600 530" role="group" aria-label="操作區；可用鍵盤選取標籤並移至可聚焦的目標位置"></svg>
       <p class="boardnote" id="st-note"></p>
     </div>
     <div class="panel">
@@ -433,7 +462,7 @@ const pctr=(k,W,ox=0,oy=0)=>(px,py)=>[ox+px/100*W,oy+py/100*ht(k,W)];
 const shuffleArr=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
 </script>
 <script>
-/* ════════ 圖解教學 12 張圖卡 ════════ */
+/* ════════ 圖解教學 15 張圖卡 ════════ */
 const COL={c1:'#4E8A2E',c2:'#C9612A',c3:'#6B4FA0',c4:'#0E7C74',c5:'#877865',c6:'#2E6A8A',c7:'#B8402F'};
 const pl=arr=>arr.map(([x,y,t,c,d,rx,ry])=>(rx!=null?`<span class="ring" style="left:${rx}%;top:${ry}%;animation-delay:${d}s;border-color:${COL[c]}"></span>`:'')+`<span class="pill ${c}" style="left:${x}%;top:${y}%;animation-delay:${d+.1}s">${t}</span>`).join('');
 const aniImg=(k,alt,pills,style='')=>`<div style="position:relative;${style}"><img class="base" src="${IMG[k]}" alt="${alt}" style="width:100%">${pl(pills)}</div>`;
@@ -478,7 +507,7 @@ const LEARN=[
 {t:'光合作用在葉綠體進行',src:'課本 P25；簡報 p2–p3',
  fig:()=>`<div class="ani" id="ani" style="max-width:460px;margin:0 auto">${aniImg('s03','從植物到葉綠體',[[86,42,'植物','c5',.2],[64,57,'葉肉細胞','c5',.7],[30,96,'葉綠體','c1',1.2],[79,64.5,'外膜','c4',1.8],[79,72.5,'內膜','c4',2.3],[80,80.5,'類囊體','c1',2.8],[79,89,'基質','c3',3.3],[8,76,'葉綠餅','c1',3.8,20,81]])}</div>
   <button class="replay">▶ 重播動畫</button><div class="cap">簡報 p3：真核生物的光合作用在葉綠體中進行（去字後依序標示）</div>`,
- txt:`<p class="quote">光合作用是生物利用光能，將 CO₂ 及 H₂O 合成醣類的過程。光合作用在葉綠體中進行，包括兩個階段：第一個階段稱為光反應，發生於類囊體；第二個階段稱為固碳反應，發生於葉綠體的基質。<small>課本 P25</small></p>
+ txt:`<p class="quote">光合作用是生物利用光能，將 CO₂ 及 H₂O 合成醣類的過程。植物、藻類等真核生物的光合作用在葉綠體中進行，包括兩個階段：光反應發生於類囊體膜，固碳反應發生於葉綠體基質。藍綠菌等原核生物沒有葉綠體，也能行光合作用。<small>課本 P25</small></p>
  <ul><li>反應式（簡報 p2）：<b>CO₂＋H₂O＋光能 → 醣類＋O₂＋H₂O</b></li>
  <li>葉綠體：<b>雙層膜</b>（外膜、內膜）；一片片的<b class="k1">類囊體</b>堆疊成<b class="k1">葉綠餅</b>；葉綠餅之間是<b class="k3">基質</b>。</li>
  <li>記位置：<b class="k1">光反應 → 類囊體</b>；<b class="k3">固碳反應 → 基質</b>。</li></ul>`},
@@ -506,7 +535,7 @@ const LEARN=[
  <li>能量轉變：<b class="k2">化學能（ATP、NADPH）→ 化學能（醣類）</b>。</li>
  <li>醣類還可合成<b>澱粉、纖維素、蛋白質及脂質</b>等有機物，作為生長的原料。</li></ul>`},
 {t:'動畫：光合作用全程',src:'簡報 p3–p10（原始動畫）',set:'ps',
- txt:`<p class="quote">光合作用在葉綠體中進行，包括兩個階段：第一個階段稱為光反應，發生於類囊體；第二個階段稱為固碳反應，發生於葉綠體的基質。<small>課本 P25</small></p>
+ txt:`<p class="quote">植物、藻類等真核生物的光合作用在葉綠體中進行，包括兩個階段：光反應發生於類囊體膜，固碳反應發生於葉綠體基質。藍綠菌等原核生物沒有葉綠體，也能行光合作用。<small>課本 P25</small></p>
  <ul><li><b class="k1">光反應</b>（類囊體）：光能 → H₂O 分解 → O₂ 釋出 → 產生 ATP、NADPH。</li>
  <li><b class="k3">固碳反應</b>（基質）：ATP、NADPH ＋ CO₂ → 醣類。</li>
  <li>兩階段互相接力：ADP＋Pi、NADP⁺ 送回光反應再利用。</li>
@@ -657,6 +686,16 @@ const ALL_STAGES=[
  why:'釋能的代謝反應（例如呼吸作用）放出的能量，讓 ADP＋Pi 合成 ATP；ATP 水解回 ADP＋Pi 時釋出能量，提供給蛋白質合成、精子游動、肌肉收縮等需能的代謝反應。ATP 就像細胞裡流通的「能量貨幣」。',
  refs:[R('atp','課本 P24 圖1-16（原圖）'),R('atpS','知識補給站：ATP 的構造')]},
 
+{g:'g1',t:'代謝與能量：學測挑戰',sub:'簡報原檔第 39–40 張｜應選 2 項。',
+ kind:'multi',q:'下列有關同化代謝、異化代謝與能量轉換的敘述，哪些正確？（應選 2 項）',hint:'留意 ATP 和 ADP 的角色，以及小分子合成大分子時的能量變化。',
+ opts:[{t:'ADP 是大部分代謝反應能量的主要提供者。',ok:false,tag:'A1'},
+  {t:'小分子合成大分子通常是釋放能量的反應。',ok:false,tag:'A1'},
+  {t:'異化代謝常伴隨 ATP 的生成。',ok:true},
+  {t:'大多數需能反應都由 ATP → AMP＋Pi 直接提供能量。',ok:false,tag:'A1'},
+  {t:'葡萄糖合成澱粉是儲能的化學反應。',ok:true}],
+ why:'正確敘述是「異化代謝常伴隨 ATP 的生成」和「葡萄糖合成澱粉是儲能的化學反應」。異化代謝分解物質，常將釋出的能量轉存在 ATP；葡萄糖合成澱粉屬於同化作用，會把能量儲存在有機物中。多數需能反應使用 ATP 水解成 ADP＋Pi 所釋出的能量，不是 ADP 供能，也不是 ATP → AMP＋Pi。（簡報原檔第 39–40 張）',
+ refs:[R('atp','課本 P24 圖1-16：ATP 與 ADP 的能量循環')]},
+
 {g:'g1',t:'反應在哪裡發生？',sub:'課本 P25 圖1-17，所有文字都被拿掉了。',
  kind:'hot',q:'',hint:'直接在左邊的圖上點一下。',note:'點圖作答：每點錯一次會記一次',sceneH:417,
  steps:[{q:'光合作用的第一階段——光反應——發生在哪裡？請在圖上點一下。',want:'thy',lbl:'光反應：類囊體'},
@@ -739,6 +778,16 @@ const ALL_STAGES=[
  why:'有機物的碳來自空氣中的 CO₂：固碳反應把 CO₂ 固定成醣類，醣類再合成纖維素、澱粉等。水提供了氫（也是光反應中 O₂ 的來源）；光提供的是能量，不是物質。這正是凡赫芒當年沒有想到的部分。',
  refs:[R('f17','課本 P25 圖1-17　CO₂ 在基質中被固定成醣類')]},
 
+{g:'g1',t:'光反應與固碳反應：學測挑戰',sub:'簡報原檔第 41–42 張｜應選 2 項。',
+ kind:'multi',q:'下列有關光合作用的敘述，哪些正確？（應選 2 項）',hint:'「固碳反應」不直接使用光，不代表它在黑暗中一定能有效進行。',
+ opts:[{t:'光反應發生在類囊體膜上；固碳反應發生在類囊體囊腔內。',ok:false,tag:'P1'},
+  {t:'光反應可將光能轉換為細胞可利用的化學能。',ok:true},
+  {t:'光反應不需要酵素，只有固碳反應需要酵素。',ok:false,tag:'P1'},
+  {t:'固碳反應利用酵素固定二氧化碳形成醣類，醣類還可轉為其他有機物。',ok:true},
+  {t:'只要額外提供能量，即使長時間無光，固碳反應仍可有效持續。',ok:false,tag:'P3'}],
+ why:'正確敘述是「光反應可將光能轉換為細胞可利用的化學能」和「固碳反應利用酵素固定 CO₂ 形成醣類」。光反應在類囊體膜上進行；固碳反應在基質進行。固碳反應不直接使用光，但依賴光反應供應 ATP、NADPH，且部分酵素需受光活化，因此不能把它理解成可在黑暗中持續有效進行。（簡報原檔第 41–42 張）',
+ refs:[R('f17','課本 P25 圖1-17：光反應與固碳反應的位置')]},
+
 /* ── 第二階段 呼吸作用 ── */
 {g:'g2',t:'有氧呼吸的路線圖',sub:'課本 P28 圖1-18a，標籤被拿掉了。',
  kind:'drag',q:'把 8 張標籤貼回有氧呼吸的過程圖。',
@@ -813,9 +862,9 @@ const ALL_STAGES=[
    ['光合作用釋出的 O₂，來自於水分子的分解。',true,'P2','光反應中 H₂O 被分解，產生電子、H⁺ 及 O₂。'],
    ['原核生物沒有粒線體，所以無法進行有氧呼吸。',false,'R5','原核生物的有氧呼吸在細胞質液與細胞膜上進行。'],
    ['只要葡萄糖充足，釀酒酵母即使在有氧的情況下，仍可進行酒精發酵。',true,'R5','課本 P29 知識補給站：不是只有缺氧才進行酒精發酵。'],
-   ['固碳反應「與光照無直接關係」，所以植物在長時間黑暗中也能持續固碳。',false,'P3','固碳反應需要光反應持續供應 ATP 與 NADPH；沒有光，這些很快就用完了。'],
+   ['固碳反應「與光照無直接關係」，所以植物在長時間黑暗中也能持續固碳。',false,'P3','固碳反應不直接使用光，但需要光反應供應 ATP 與 NADPH；此外，部分固碳酵素需要光照活化，因此長時間無光時不能持續有效固碳。'],
    ['ATP 水解成 ADP＋Pi 時會釋出能量，可供肌肉收縮等需能反應使用。',true,'A1','課本 P24：ATP 是細胞內的能量貨幣。']],
- why:'植物同時進行光合作用與呼吸作用；O₂ 來自水；原核生物也能有氧呼吸；酵母菌有氧時仍可發酵；固碳反應雖不直接用光，卻依賴光反應的產物；ATP 水解釋出能量。',
+ why:'植物同時進行光合作用與呼吸作用；O₂ 來自水；原核生物也能有氧呼吸；酵母菌有氧時仍可發酵；固碳反應雖不直接使用光，卻依賴 ATP、NADPH，且部分相關酵素需受光活化；ATP 水解會釋出能量。',
  refs:[R('f19','課本 P30 圖1-19')]},
 
 {g:'g3',t:'物質循環、能量流動',sub:'課本 P30 圖1-19，標籤被拿掉了。',
@@ -853,18 +902,18 @@ const ALL_STAGES=[
  why:'兩者都經過糖解作用、都會產生 ATP。只有乳酸發酵才把丙酮酸還原成乳酸；只有有氧呼吸的部分過程在粒線體，發酵作用在細胞質液；只有酒精發酵會產生酒精。（簡報 p27 解析）',
  refs:[R('f18a','課本 P28 圖1-18a'),R('f18b','課本 P29 圖1-18b')]}
 ];
-/* 精選 12 關：ATP 循環、點圖找位置、葉綠體進出、光反應vs固碳反應、光合作用步驟、圖表判讀、有氧呼吸路線圖、反應式填空、發酵作用岔路、三種呼吸比較、是非快答、物質循環與能量流動 */
-const KEEP=[0,1,2,3,4,5,7,8,9,10,11,12];
+/* 開放全部 17 題：保留三題原先未列入闖關的題目，並加入簡報第39–42張學測題。 */
+const KEEP=ALL_STAGES.map((_,i)=>i);
 const STAGES=KEEP.map(i=>ALL_STAGES[i]);
-const LEARN_FOR_STAGE=[1,2,7,7,4,7,9,9,11,13,14,14];
+const LEARN_FOR_STAGE=[1,1,7,7,7,4,7,8,7,9,13,11,13,14,14,14,13];
 
 </script>
 <script>
 const el=id=>document.getElementById(id);
-const KEY='energygame.v2';
+const KEY='energygame.v3';
 const REVEAL_N=5;   /* 答錯幾次後自動顯示答案 */
 const SOLS={"光反應還是固碳反應？": {"L0": "a1", "L1": "a2", "L2": "a3", "L3": "a4", "L4": "a5", "C0": "b1", "C1": "b2", "C2": "b3", "C3": "b4", "C4": "b5"}};
-let ST={idx:0,tries:{},tags:{},who:{n:'',c:'',s:''},t0:0,done:false,passed:{},drafts:{},revealed:{}};
+let ST={idx:0,tries:{},tags:{},who:{n:'',c:'',s:''},t0:0,done:false,passed:{},drafts:{},answers:{},revealed:{}};
 let place={},sel=null,answered=false,pick=new Set(),order=[],layout={};
 let seqv=[],fillv={},fillOn=null,matchv={},gridv={},tfv={},hotStep=0,optPerm=[];
 let activeStage=false;
@@ -872,33 +921,44 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(ST))}catch(e){}}
 function load(){try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r)}catch(e){}return null}
 const GN={g1:'ATP 與光合作用',g2:'呼吸作用',g3:'能量轉換總整理'};
 
+function captureResponse(){
+  const d={},s=STAGES[ST.idx];
+  if(s.kind==='drag'&&place&&Object.keys(place).length)d.place={...place};
+  if((s.kind==='single'||s.kind==='multi')&&pick.size)d.pick=[...pick];
+  if(s.kind==='order'&&seqv.length)d.seqv=[...seqv];
+  if(s.kind==='fill'&&Object.keys(fillv).length)d.fillv={...fillv};
+  if(s.kind==='match'&&Object.keys(matchv).length)d.matchv={...matchv};
+  if(s.kind==='grid'&&Object.keys(gridv).length)d.gridv={...gridv};
+  if(s.kind==='tf'&&Object.keys(tfv).length)d.tfv={...tfv};
+  if(s.kind==='hot'&&hotStep)d.hotStep=hotStep;
+  const mk=el('marks');if(s.kind==='hot'&&mk&&mk.innerHTML.trim())d.marks=mk.innerHTML;
+  return d;
+}
+function hasResponse(d){return !!d&&Object.keys(d).some(k=>k!=='marks'||!!d[k]);}
+function applyResponse(d={}){
+  place={...(d.place||{})};pick=new Set(d.pick||[]);seqv=[...(d.seqv||[])];fillv={...(d.fillv||{})};
+  matchv={...(d.matchv||{})};gridv={...(d.gridv||{})};tfv={...(d.tfv||{})};hotStep=d.hotStep||0;
+  if(d.marks&&el('marks'))el('marks').innerHTML=d.marks;
+}
 function saveDraft(){
-  if(ST.done||!activeStage)return;
-  ST.drafts=ST.drafts||{};
-  const d={};
-  if(place&&Object.keys(place).length)d.place={...place};
-  if(pick&&pick.size)d.pick=[...pick];
-  if(seqv&&seqv.length)d.seqv=[...seqv];
-  if(fillv&&Object.keys(fillv).length)d.fillv={...fillv};
-  if(matchv&&Object.keys(matchv).length)d.matchv={...matchv};
-  if(gridv&&Object.keys(gridv).length)d.gridv={...gridv};
-  if(tfv&&Object.keys(tfv).length)d.tfv={...tfv};
-  if(hotStep)d.hotStep=hotStep;
-  const mk=el('marks');if(mk&&mk.innerHTML.trim())d.marks=mk.innerHTML;
-  ST.drafts[ST.idx]=d;
+  if(ST.done||!activeStage||ST.passed?.[ST.idx])return;
+  ST.drafts=ST.drafts||{};const d=captureResponse();
+  if(hasResponse(d))ST.drafts[ST.idx]=d;else delete ST.drafts[ST.idx];
   save();
 }
 
 /* ── 進度軌 ── */
 function drawTrack(){
-  el('track').innerHTML=STAGES.map((s,i)=>{const t=ST.tries[i],cls=i===ST.idx&&!ST.done?'now':(t!=null&&ST.passed&&ST.passed[i]?'done':(t!=null&&t>0?'attempted':''));
-    return `<button type="button" class="tseg ${cls}" data-g="${s.g}" data-i="${i}" data-tries="${t==null?'':Math.min(t,3)}" title="${s.t}">${i+1}</button>`}).join('');
+  el('track').innerHTML=STAGES.map((s,i)=>{const t=ST.tries[i]||0,d=hasResponse(ST.drafts&&ST.drafts[i]),done=!!ST.passed?.[i],rev=!!ST.revealed?.[i];
+    const state=done?(rev?'看過答案，已完成':'已完成'):t>0?'已嘗試，待完成':d?'作答中，尚未提交':'未開始';
+    const cls=i===ST.idx&&!ST.done?`now ${d?'draft':''}`:done?(rev?'revealed':'done'):t>0?'attempted':d?'draft':'';
+    return `<button type="button" class="tseg ${cls}" data-g="${s.g}" data-i="${i}" data-tries="${Math.min(t,3)}" title="第 ${i+1} 題：${s.t}｜${state}" aria-label="第 ${i+1} 題：${s.t}，${state}" aria-current="${i===ST.idx&&!ST.done?'step':'false'}">${i+1}</button>`}).join('');
   el('track').querySelectorAll('.tseg').forEach(b=>b.onclick=()=>{if(!ST.done)show(+b.dataset.i)});
   const s=STAGES[ST.idx];
   el('crumb').innerHTML=`${GN[s.g]} <b>·</b> ${s.t} <b>·</b> ${ST.idx+1} / ${STAGES.length}`;
   const qsel=el('question-select');
   if(qsel){
-    qsel.innerHTML=STAGES.map((st,idx)=>`<option value="${idx}" ${idx===ST.idx?'selected':''}>第 ${idx+1} 題：${st.t}（${KSHORT[st.kind]}）${ST.passed&&ST.passed[idx]?' ✓':ST.tries[idx]?' · 待完成':''}</option>`).join('');
+    qsel.innerHTML=STAGES.map((st,idx)=>{const d=hasResponse(ST.drafts&&ST.drafts[idx]),done=!!ST.passed?.[idx],t=ST.tries[idx]||0;const mark=done?(ST.revealed?.[idx]?'｜看過答案':'｜完成'):t?'｜待完成':d?'｜作答中':'';return `<option value="${idx}" ${idx===ST.idx?'selected':''}>第 ${idx+1} 題：${st.t}（${KSHORT[st.kind]}）${mark}</option>`}).join('');
   }
 }
 
@@ -931,15 +991,18 @@ function renderBoard(s){
   const TL=trayLayout(s);layout=TL.L;
   b.setAttribute('viewBox',`0 0 600 ${TL.H}`);
   let o=s.scene();
-  o+=s.slots.map(x=>`<g class="slotg" data-slot="${x.id}"><rect class="slot" x="${x.x-x.w/2}" y="${x.y-x.h/2}" width="${x.w}" height="${x.h}" rx="7" fill="#FFFFFF" fill-opacity=".72" stroke="${TEAL}" stroke-width="2" stroke-dasharray="5 4" opacity=".9"/></g>`).join('');
+  o+=s.slots.map((x,i)=>`<g class="slotg" data-slot="${x.id}" tabindex="0" role="button" aria-label="放置標籤的目標空格 ${i+1}"><rect class="slot" x="${x.x-x.w/2}" y="${x.y-x.h/2}" width="${x.w}" height="${x.h}" rx="7" fill="#FFFFFF" fill-opacity=".72" stroke="${TEAL}" stroke-width="2" stroke-dasharray="5 4" opacity=".9"/></g>`).join('');
   o+=`<rect x="4" y="${s.sceneH+6}" width="592" height="${TL.H-s.sceneH-10}" rx="12" fill="#F1ECE2" stroke="#D8CEBC" stroke-width="1.5"/>`
     +txt(18,s.sceneH+28,'托盤　TRAY',{a:'start',fs:13,fw:500,c:'#877865',x:'letter-spacing="2"'});
   o+=order.map(p=>`<g class="piece" data-piece="${p.id}" tabindex="0" role="button" aria-label="標籤 ${p.label}">${pieceSVG(p)}</g>`).join('');
   b.innerHTML=o;el('st-note').textContent=s.note||'';
   syncBoard();
-  b.querySelectorAll('.slotg').forEach(g=>g.addEventListener('click',()=>{
-    if(answered||!sel)return;const id=g.dataset.slot;if(place[id])return;
-    for(const k in place)if(place[k]===sel)delete place[k];place[id]=sel;sel=null;syncBoard();}));
+  b.querySelectorAll('.slotg').forEach(g=>{
+    const put=()=>{if(answered||!sel)return;const id=g.dataset.slot;if(place[id])return;
+      for(const k in place)if(place[k]===sel)delete place[k];place[id]=sel;sel=null;syncBoard();saveDraft();drawTrack();};
+    g.addEventListener('click',put);
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();put();}});
+  });
 }
 function syncBoard(){
   const s=STAGES[ST.idx];if(s.kind!=='drag')return;
@@ -972,13 +1035,18 @@ function onUp(e){
   s.slots.forEach(x=>{if(place[x.id]&&place[x.id]!==d.id)return;const dd=Math.hypot(x.x-p.x,x.y-p.y);if(dd<bd){bd=dd;best=x}});
   for(const k in place)if(place[k]===d.id)delete place[k];
   if(best&&bd<Math.max(best.w,best.h)/2+30)place[best.id]=d.id;
-  sel=null;syncBoard();
+  sel=null;syncBoard();saveDraft();drawTrack();
 }
 
 /* ── 點圖找位置 ── */
 function hotClick(e){
   const s=STAGES[ST.idx];if(s.kind!=='hot'||answered)return;
-  const p=svgPt(e),H=ht('f17B',600),px=p.x/6,py=p.y/H*100,r=region17(px,py),step=s.steps[hotStep];
+  const p=svgPt(e),H=ht('f17B',600),px=p.x/6,py=p.y/H*100;
+  answerHotRegion(region17(px,py),p);
+}
+function answerHotRegion(r,p){
+  const s=STAGES[ST.idx];if(s.kind!=='hot'||answered)return;
+  const H=ht('f17B',600),step=s.steps[hotStep];p=p||{x:210,y:230};
   const mk=el('marks');
   ST.tries[ST.idx]=ST.tries[ST.idx]||1;
   if(r===step.want){
@@ -997,9 +1065,9 @@ function hotClick(e){
     if(ST.tries[ST.idx]-1>=REVEAL_N){revealHot(s);drawTrack();save();return;}
     el('q-fb').insertAdjacentHTML('beforeend',`<div class="fb no" style="margin-top:8px"><p class="left">再點錯 ${REVEAL_N-(ST.tries[ST.idx]-1)} 次，就會自動顯示答案。</p></div>`);
   }
-  drawTrack();save();
+  drawTrack();saveDraft();save();
 }
-function renderHotSteps(s){el('q-opts').innerHTML=`<div class="hotstep">${s.steps.map((x,i)=>`<span class="${i<hotStep?'ok':i===hotStep?'on':''}">${i<hotStep?'✓ ':''}${x.lbl.split('：')[0]}</span>`).join('')}</div>`}
+function renderHotSteps(s){el('q-opts').innerHTML=`<div class="hotstep">${s.steps.map((x,i)=>`<span class="${i<hotStep?'ok':i===hotStep?'on':''}">${i<hotStep?'✓ ':''}${x.lbl.split('：')[0]}</span>`).join('')}</div><div class="hotchoices" aria-label="鍵盤或觸控替代作答"><button class="seg" data-hot="thy">類囊體（光反應）</button><button class="seg" data-hot="str">基質（固碳反應）</button></div>`;el('q-opts').querySelectorAll('[data-hot]').forEach(b=>b.onclick=()=>answerHotRegion(b.dataset.hot,b.dataset.hot==='thy'?{x:210,y:230}:{x:330,y:220}));}
 
 /* ── 各題型的面板 ── */
 function refHTML(list){return `<div class="refs">${list.map(r=>`<figure><img src="${IMG[r.src]}" alt="${r.cap}" loading="lazy" class="zoomable"><figcaption>${r.cap}</figcaption></figure>`).join('')}</div>`}
@@ -1079,22 +1147,21 @@ function show(i){
   saveDraft();
   if(ST.done){ST.done=false;el('done').classList.add('hidden');['play','bar'].forEach(x=>el(x).classList.remove('hidden'));}
   ST.idx=i;place={};sel=null;pick.clear();answered=false;seqv=[];fillv={};fillOn=null;matchv={};gridv={};tfv={};hotStep=0;
-  const draft=ST.drafts&&ST.drafts[i];
-  if(draft){
-    place={...draft.place};pick=new Set(draft.pick||[]);seqv=[...(draft.seqv||[])];fillv={...draft.fillv};
-    matchv={...draft.matchv};gridv={...draft.gridv};tfv={...draft.tfv};hotStep=draft.hotStep||0;
-  }
-  const s=STAGES[i];
+  const s=STAGES[i],completed=!!ST.passed?.[i],response=completed?(ST.answers&&ST.answers[i]):(ST.drafts&&ST.drafts[i]);
+  if(response)applyResponse(response);answered=completed;
   el('check-btn').classList.toggle('hidden',s.kind==='hot');el('next-btn').classList.add('hidden');el('skip-btn').classList.remove('hidden');
   el('reset-btn').classList.toggle('hidden',!['drag','order','fill','grid','tf','match'].includes(s.kind));el('barmsg').textContent=s.kind==='hot'?'在圖上點一下作答':'';
   renderPanel(s);renderBoard(s);
-  if(draft&&(s.kind==='single'||s.kind==='multi'))el('q-opts').querySelectorAll('.opt').forEach(b=>b.classList.toggle('sel',pick.has(+b.dataset.i)));
-  if(s.kind==='hot'&&draft?.marks)el('marks').innerHTML=draft.marks;
-  if(ST.passed&&ST.passed[i])el('barmsg').textContent='本題已有完成紀錄；可以重新練習，或選擇其他題目。';
-  activeStage=true;drawTrack();save();window.scrollTo({top:0,behavior:'smooth'});
+  if(response?.marks&&el('marks'))el('marks').innerHTML=response.marks;
+  if(response&&(s.kind==='single'||s.kind==='multi'))el('q-opts').querySelectorAll('.opt').forEach(b=>b.classList.toggle('sel',pick.has(+b.dataset.i)));
+  if(s.kind==='hot'&&hotStep>0&&!completed)el('q-text').textContent=s.steps[Math.min(hotStep,s.steps.length-1)].q;
+  if(completed){activeStage=true;pass(s,!!ST.revealed?.[i]);}
+  if(!completed){activeStage=true;drawTrack();save();}
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 function addTags(t){(t||[]).forEach(x=>{ST.tags[x]=(ST.tags[x]||0)+1})}
 function pass(s,rev){
+  ST.answers=ST.answers||{};ST.answers[ST.idx]=captureResponse();
   answered=true;ST.passed=ST.passed||{};ST.passed[ST.idx]=true;
   if(ST.drafts)delete ST.drafts[ST.idx];
   if(rev){ST.revealed=ST.revealed||{};ST.revealed[ST.idx]=true;}
@@ -1129,7 +1196,7 @@ function revealHot(s){
   renderHotSteps(s);pass(s,`已點錯 ${REVEAL_N} 次，橘色標記就是正確位置，請對照答案再讀一次解析：`);
 }
 function check(){
-  const s=STAGES[ST.idx];if(answered||s.kind==='hot')return;let r;
+  const s=STAGES[ST.idx];if(answered||s.kind==='hot')return;saveDraft();let r;
   if(s.kind==='drag'){const m={};s.slots.forEach(x=>{m[x.id]=place[x.id]?s.pieces.find(p=>p.id===place[x.id]):null});r=s.check(m);}
   else if(s.kind==='single'||s.kind==='multi'){const right=new Set(s.opts.map((x,i)=>x.ok?i:-1).filter(i=>i>=0));
     if(!pick.size){el('barmsg').textContent='先選答案。';return;}
@@ -1178,6 +1245,8 @@ function check(){
   el('barmsg').textContent=`已嘗試 ${ST.tries[ST.idx]} 次`;
   drawTrack();save();
 }
+/* 所有題目操作都在 #play；延後到各題型 click handler 更新狀態後再保存。 */
+el('play').addEventListener('click',()=>setTimeout(()=>{if(activeStage&&!answered){saveDraft();drawTrack();}},0),true);
 /* ── 診斷卡 ── */
 function finish(){
   saveDraft();activeStage=false;
@@ -1185,11 +1254,13 @@ function finish(){
   ['play','bar'].forEach(x=>el(x).classList.add('hidden'));
   const mins=Math.max(1,Math.round((Date.now()-ST.t0)/60000)),tr=STAGES.map((s,i)=>ST.tries[i]||0);
   const passed=ST.passed||{},one=tr.filter((t,i)=>passed[i]&&t===1).length,two=tr.filter((t,i)=>passed[i]&&t===2).length,hard=tr.filter((t,i)=>passed[i]&&t>=3).length;
-  const skipped=tr.filter(t=>t===0).length,pending=tr.filter((t,i)=>t>0&&!passed[i]).length,w=ST.who;
+  const draftCount=STAGES.filter((_,i)=>!passed[i]&&tr[i]===0&&hasResponse(ST.drafts&&ST.drafts[i])).length;
+  const skipped=STAGES.filter((_,i)=>!passed[i]&&tr[i]===0&&!hasResponse(ST.drafts&&ST.drafts[i])).length;
+  const pending=tr.filter((t,i)=>t>0&&!passed[i]).length,w=ST.who;
   const safe=v=>String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const RV=ST.revealed||{};const rows=STAGES.map((s,i)=>{const t=tr[i],c=!t?'skip':!passed[i]?'pending':(t>=3||RV[i])?'t3':t===2?'t2':'t1';
-    const count=s.kind==='hot'?`點錯 ${Math.max(0,t-1)} 次`:`提交 ${t} 次`;
-    const label=!t?'未作答':!passed[i]?`待完成 · ${count}`:RV[i]?`看了答案 · ${count}`:count;
+  const RV=ST.revealed||{};const rows=STAGES.map((s,i)=>{const t=tr[i],d=hasResponse(ST.drafts&&ST.drafts[i]),c=passed[i]?(RV[i]?'t3':t>=3?'t3':t===2?'t2':'t1'):t>0?'pending':d?'drafted':'skip';
+    const count=s.kind==='hot'?`點圖錯誤 ${Math.max(0,t-1)} 次`:`提交 ${t} 次`;
+    const label=passed[i]?RV[i]?`看過答案 · ${count}`:count:t>0?`待完成 · ${count}`:d?'作答中 · 尚未提交':'未開始';
     return `<button type="button" class="row ${c}" data-i="${i}" aria-label="返回第 ${i+1} 題：${s.t}，${label}"><span class="i">${String(i+1).padStart(2,'0')}</span><span>${s.t}</span><span class="kd">${KSHORT[s.kind]}</span><span class="m">${label}</span></button>`}).join('');
   const mk=Object.keys(ST.tags).sort((a,b)=>ST.tags[b]-ST.tags[a]);
   const miss=mk.length?mk.map(k=>`<div class="mi"><b>${TAGS[k][0]}　<span>觸發 ${ST.tags[k]} 次</span></b>${TAGS[k][1]}<br><span>回頭看：${TAGS[k][2]}</span></div>`).join('')
@@ -1200,7 +1271,8 @@ function finish(){
       <div class="stat"><div class="v" style="color:var(--warn)">${two}</div><div class="l">試了 2 次</div></div>
       <div class="stat"><div class="v" style="color:var(--no)">${hard}</div><div class="l">試了 3 次以上</div></div>
       <div class="stat"><div class="v" style="color:var(--warn)">${Object.keys(ST.revealed||{}).length}</div><div class="l">看了答案</div></div>
-      <div class="stat"><div class="v">${skipped}</div><div class="l">未作答</div></div>
+      <div class="stat"><div class="v">${skipped}</div><div class="l">未開始</div></div>
+      <div class="stat"><div class="v" style="color:var(--accent)">${draftCount}</div><div class="l">作答中</div></div>
       <div class="stat"><div class="v">${pending}</div><div class="l">待完成</div></div>
       <div class="stat"><div class="v">${tr.reduce((a,b,i)=>a+(STAGES[i].kind==='hot'?0:b),0)}</div><div class="l">題目提交次數</div></div>
       <div class="stat"><div class="v">${tr.reduce((a,b,i)=>a+(STAGES[i].kind==='hot'?Math.max(0,b-1):0),0)}</div><div class="l">點圖錯誤次數</div></div></div>
@@ -1211,7 +1283,7 @@ function finish(){
   el('done').classList.remove('hidden');drawTrack();
   el('done').querySelectorAll('.row').forEach(b=>b.onclick=()=>show(+b.dataset.i));
   el('back-to-play').onclick=()=>show(ST.idx);
-  el('again').onclick=()=>{ST={idx:0,tries:{},tags:{},passed:{},who:ST.who,t0:Date.now(),done:false};STAGES.forEach(s=>{delete s._disp;delete s._bank;delete s._perm});el('done').classList.add('hidden');startPlay();};
+  el('again').onclick=()=>{ST={idx:0,tries:{},tags:{},passed:{},drafts:{},answers:{},revealed:{},who:ST.who,t0:Date.now(),done:false};STAGES.forEach(s=>{delete s._disp;delete s._bank;delete s._perm});el('done').classList.add('hidden');startPlay();};
   el('relearn').onclick=()=>{el('done').classList.add('hidden');openLearn(0)};
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -1223,12 +1295,13 @@ function startPlay(){
   if(!ST.t0)ST.t0=Date.now();
   ['intro','learn','done'].forEach(x=>el(x).classList.add('hidden'));
   ['play','topbar','bar'].forEach(x=>el(x).classList.remove('hidden'));
-  if(ST.done){ST={idx:0,tries:{},tags:{},passed:{},who:ST.who,t0:Date.now(),done:false}}
+  if(ST.done){ST={idx:0,tries:{},tags:{},passed:{},drafts:{},answers:{},revealed:{},who:ST.who,t0:Date.now(),done:false}}
   show(ST.idx||0);
 }
 el('go').onclick=()=>{grabWho();startPlay()};
 el('go-learn').onclick=()=>{grabWho();openLearn(0);el('l-resume').classList.add('hidden');};
 el('go-show').onclick=()=>openShow(0);
+el('resume-done').onclick=()=>finish();
 el('to-learn').onclick=()=>openLearn(LEARN_FOR_STAGE[ST.idx]||0);
 el('l-prev').onclick=()=>LI>0&&showLearn(LI-1);
 el('l-resume').onclick=startPlay;
@@ -1239,7 +1312,7 @@ el('prev-btn').onclick=()=>show(ST.idx-1);
 el('skip-btn').onclick=()=>ST.idx+1<STAGES.length?show(ST.idx+1):finish();
 el('finish-btn').onclick=finish;
 el('reset-btn').onclick=()=>{if(answered)return;const s=STAGES[ST.idx];place={};sel=null;seqv=[];fillv={};fillOn=null;matchv={};gridv={};tfv={};
-  if(s.kind==='drag')syncBoard();else renderPanel(s);el('q-fb').innerHTML=s.preRefs?refHTML(s.preRefs):'';bindZoom(el('q-fb'));el('barmsg').textContent='';};
+  if(s.kind==='drag')syncBoard();else renderPanel(s);el('q-fb').innerHTML=s.preRefs?refHTML(s.preRefs):'';bindZoom(el('q-fb'));el('barmsg').textContent='';saveDraft();drawTrack();};
 el('next-btn').onclick=()=>ST.idx+1<STAGES.length?show(ST.idx+1):finish();
 const B=el('board');
 B.addEventListener('pointerdown',onDown);B.addEventListener('pointermove',onMove);B.addEventListener('pointerup',onUp);B.addEventListener('pointercancel',onUp);
@@ -1248,10 +1321,13 @@ B.addEventListener('keydown',e=>{const g=e.target.closest&&e.target.closest('.pi
 el('heroimg').innerHTML=`<img src="${IMG.f19}" alt="課本 P30 圖1-19 光合作用和呼吸作用在能量轉換上的關係">`;
 (function boot(){
   const saved=load();
-  if(saved&&!saved.done&&(saved.idx>0||Object.keys(saved.tries||{}).length)){
-    ST=Object.assign(ST,saved);el('f-name').value=ST.who.n||'';el('f-cls').value=ST.who.c||'';el('f-no').value=ST.who.s||'';
-    el('go').textContent=`繼續闖關（第 ${ST.idx+1} 關）`;}
-})();
+  if(saved&&(saved.done||saved.idx>0||Object.keys(saved.tries||{}).length||Object.keys(saved.drafts||{}).length)){
+    ST=Object.assign(ST,saved);ST.drafts=ST.drafts||{};ST.answers=ST.answers||{};ST.passed=ST.passed||{};ST.revealed=ST.revealed||{};
+    el('f-name').value=ST.who.n||'';el('f-cls').value=ST.who.c||'';el('f-no').value=ST.who.s||'';
+    if(ST.done)el('resume-done').classList.remove('hidden');
+    else el('go').textContent=`繼續闖關（第 ${ST.idx+1} 題）`;
+  }
+})();;
 window.addEventListener('pagehide',saveDraft);
 </script>
 </body></html>
